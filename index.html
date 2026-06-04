@@ -342,16 +342,22 @@
     document.getElementById('video-title').textContent = title;
     document.getElementById('video-date').textContent  = dateStr;
 
-    // click thumbnail → swap for embedded iframe (user gesture allows autoplay)
+    // mobile → open YouTube app directly; desktop → embed inline
+    const isMobile = navigator.maxTouchPoints > 1 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
     document.getElementById('play-btn').addEventListener('click', () => {
-      const wrap = document.getElementById('thumb-wrap');
-      wrap.innerHTML = '';
-      const iframe = document.createElement('iframe');
-      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-      iframe.allowFullscreen = true;
-      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
-      wrap.appendChild(iframe);
+      if (isMobile) {
+        window.location.href = ytUrl;
+      } else {
+        const wrap = document.getElementById('thumb-wrap');
+        wrap.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+        wrap.appendChild(iframe);
+      }
     });
 
     document.getElementById('state-view').style.display  = 'none';
