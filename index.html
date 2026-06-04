@@ -342,10 +342,13 @@
     document.getElementById('video-title').textContent = title;
     document.getElementById('video-date').textContent  = dateStr;
 
-    // navigate to YouTube directly — avoids bot-check that appears inside iframes
+    // use youtube-nocookie.com/embed directly — cookie-free player, no sign-in required
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
     document.getElementById('play-btn').addEventListener('click', () => {
-      window.location.href = ytUrl;
+      window.location.href = embedUrl;
     });
+    // also update watch button as fallback
+    document.getElementById('watch-btn').href = embedUrl;
 
     document.getElementById('state-view').style.display  = 'none';
     document.getElementById('video-card').style.display  = 'block';
