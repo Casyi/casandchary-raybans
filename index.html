@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=640, initial-scale=1.0">
+  <title>Cas &amp; Chary XR · Ray-Ban</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --accent: #ff4500;
+      --bg: #000;
+      --surface: #111;
+      --border: #1e1e1e;
+      --text: #f1f1f1;
+      --muted: #717171;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100svh;
+      padding: 10px 12px 24px;
+      gap: 12px;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff4500 0%, #ff8c00 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      flex-shrink: 0;
+    }
+
+    .channel-name { font-size: 13px; font-weight: 700; }
+    .channel-sub  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    .ray-badge {
+      margin-left: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 3px 8px;
+      font-size: 9px;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    /* ── Thumbnail card ── */
+    .card {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color 0.15s, transform 0.1s;
+      cursor: pointer;
+    }
+    .card:hover  { border-color: #444; }
+    .card:active { transform: scale(0.99); }
+
+    .thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* play button overlay */
+    .play-btn {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.25);
+      transition: background 0.15s;
+    }
+    .card:hover .play-btn { background: rgba(0,0,0,0.1); }
+
+    .play-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      transition: transform 0.12s, background 0.12s;
+    }
+    .card:hover .play-circle  { transform: scale(1.06); background: rgba(255,60,0,0.85); }
+    .card:active .play-circle { transform: scale(0.96); }
+
+    .play-circle svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+      margin-left: 3px; /* optical centering for triangle */
+    }
+
+    /* NEW badge */
+    .new-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 4px;
+    }
+
+    /* duration badge */
+    .duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.82);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.2px;
+    }
+
+    /* card body */
+    .card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .video-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .video-meta {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+
+    /* ── Watch button ── */
+    .watch-btn {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: var(--accent);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .watch-btn:hover  { opacity: 0.88; }
+    .watch-btn:active { opacity: 0.75; }
+
+    .watch-btn svg { width: 16px; height: 16px; fill: #fff; flex-shrink: 0; }
+
+    /* ── Channel link ── */
+    .channel-link {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .channel-link:hover { border-color: #444; color: var(--text); }
+    .channel-link svg   { width: 13px; height: 13px; fill: #ff0000; flex-shrink: 0; }
+
+    /* ── Loading / Error ── */
+    #state-view {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 60px 0;
+    }
+
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2px solid #222;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .state-label { font-size: 11px; color: var(--muted); }
+    .err-link    { font-size: 12px; color: var(--accent); text-decoration: none; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="avatar">C&amp;C</div>
+  <div>
+    <div class="channel-name">Cas &amp; Chary XR</div>
+    <div class="channel-sub">Latest video</div>
+  </div>
+  <div class="ray-badge">Ray-Ban</div>
+</header>
+
+<!-- Loading state -->
+<div id="state-view">
+  <div class="spinner"></div>
+  <span class="state-label">Fetching latest video…</span>
+</div>
+
+<!-- Video card (hidden until loaded) -->
+<div id="video-card" class="card" style="display:none">
+  <div class="thumb-wrap" id="thumb-wrap">
+    <img id="thumb" src="" alt="thumbnail" loading="eager">
+    <div class="new-badge">New</div>
+    <div class="play-btn" id="play-btn">
+      <div class="play-circle">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="video-title" id="video-title"></div>
+    <div class="video-meta">
+      <span>Cas &amp; Chary XR</span>
+      <div class="dot"></div>
+      <span id="video-date"></span>
+    </div>
+  </div>
+</div>
+
+<a id="watch-btn" class="watch-btn" href="#" target="_blank" style="display:none">
+  <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+  Watch on YouTube
+</a>
+
+<a class="channel-link" href="https://www.youtube.com/channel/UCN0FGqUt7e79xKoPAZQ8tww" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+  Browse all videos
+</a>
+
+<script>
+  const CHANNEL_ID = 'UCN0FGqUt7e79xKoPAZQ8tww';
+  const RSS        = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+  const PROXIES    = [
+    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+    u => `https://thingproxy.freeboard.io/fetch/${u}`,
+  ];
+
+  async function fetchFeed() {
+    for (const proxy of PROXIES) {
+      try {
+        const res = await fetch(proxy(RSS), { cache: 'no-cache' });
+        if (!res.ok) continue;
+        const text = await res.text();
+        const doc  = new DOMParser().parseFromString(text, 'text/xml');
+        if (doc.querySelector('parsererror')) continue;
+        return doc;
+      } catch { /* next */ }
+    }
+    return null;
+  }
+
+  function show(videoId, title, dateStr) {
+    const ytUrl = `https://www.youtube.com/watch?v=${videoId}`;
+
+    // thumbnail: try maxres, fall back to hqdefault
+    const thumb = document.getElementById('thumb');
+    thumb.src = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    thumb.onerror = () => { thumb.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`; };
+
+    document.getElementById('watch-btn').href   = ytUrl;
+    document.getElementById('video-title').textContent = title;
+    document.getElementById('video-date').textContent  = dateStr;
+
+    // click thumbnail → swap for embedded iframe (user gesture allows autoplay)
+    document.getElementById('play-btn').addEventListener('click', () => {
+      const wrap = document.getElementById('thumb-wrap');
+      wrap.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:none;';
+      wrap.appendChild(iframe);
+    });
+
+    document.getElementById('state-view').style.display  = 'none';
+    document.getElementById('video-card').style.display  = 'block';
+    document.getElementById('watch-btn').style.display   = 'flex';
+  }
+
+  async function load() {
+    const doc = await fetchFeed();
+
+    if (doc) {
+      const entry = doc.querySelector('entry');
+      if (entry) {
+        const videoId =
+          entry.getElementsByTagNameNS('http://www.youtube.com/xml/schemas/2015', 'videoId')[0]?.textContent
+          ?? entry.querySelector('videoId')?.textContent
+          ?? entry.querySelector('id')?.textContent?.split(':').pop();
+
+        const title     = entry.querySelector('title')?.textContent ?? '(untitled)';
+        const published = entry.querySelector('published')?.textContent ?? '';
+        const dateStr   = published
+          ? new Date(published).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' })
+          : '';
+
+        if (videoId) { show(videoId, title, dateStr); return; }
+      }
+    }
+
+    // full fallback: link to channel
+    document.getElementById('state-view').innerHTML = `
+      <span class="state-label">Could not load feed.</span>
+      <a class="err-link" href="https://www.youtube.com/channel/${CHANNEL_ID}" target="_blank">Open Cas &amp; Chary XR on YouTube →</a>`;
+  }
+
+  load();
+</script>
+
+</body>
+</html>
